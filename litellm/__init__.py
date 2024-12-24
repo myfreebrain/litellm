@@ -471,6 +471,7 @@ friendliai_models: List = []
 palm_models: List = []
 groq_models: List = []
 azure_models: List = []
+azure_text_models: List = []
 anyscale_models: List = []
 cerebras_models: List = []
 galadriel_models: List = []
@@ -483,6 +484,8 @@ def add_known_models():
             open_ai_chat_completion_models.append(key)
         elif value.get("litellm_provider") == "text-completion-openai":
             open_ai_text_completion_models.append(key)
+        elif value.get("litellm_provider") == "azure_text":
+            azure_text_models.append(key)
         elif value.get("litellm_provider") == "cohere":
             cohere_models.append(key)
         elif value.get("litellm_provider") == "cohere_chat":
@@ -853,6 +856,7 @@ model_list = (
     + cerebras_models
     + galadriel_models
     + sambanova_models
+    + azure_text_models
 )
 
 
@@ -900,7 +904,8 @@ models_by_provider: dict = {
     "friendliai": friendliai_models,
     "palm": palm_models,
     "groq": groq_models,
-    "azure": azure_models,
+    "azure": azure_models + azure_text_models,
+    "azure_text": azure_text_models,
     "anyscale": anyscale_models,
     "cerebras": cerebras_models,
     "galadriel": galadriel_models,
@@ -993,6 +998,7 @@ from .utils import (
     get_api_base,
     get_first_chars_messages,
     ModelResponse,
+    ModelResponseStream,
     EmbeddingResponse,
     ImageResponse,
     TranscriptionResponse,
@@ -1160,6 +1166,7 @@ from .llms.perplexity.chat.transformation import PerplexityChatConfig
 from .llms.azure.chat.o1_transformation import AzureOpenAIO1Config
 from .llms.watsonx.completion.transformation import IBMWatsonXAIConfig
 from .llms.watsonx.chat.transformation import IBMWatsonXChatConfig
+from .llms.watsonx.embed.transformation import IBMWatsonXEmbeddingConfig
 from .main import *  # type: ignore
 from .integrations import *
 from .exceptions import (

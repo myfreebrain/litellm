@@ -167,6 +167,7 @@ from litellm.proxy.common_utils.proxy_state import ProxyState
 from litellm.proxy.common_utils.swagger_utils import ERROR_RESPONSES
 from litellm.proxy.fine_tuning_endpoints.endpoints import router as fine_tuning_router
 from litellm.proxy.fine_tuning_endpoints.endpoints import set_fine_tuning_config
+from litellm.proxy.guardrails.guardrail_endpoints import router as guardrails_router
 from litellm.proxy.guardrails.init_guardrails import (
     init_guardrails_v2,
     initialize_guardrails,
@@ -4241,12 +4242,11 @@ async def audio_transcriptions(
         await proxy_logging_obj.post_call_failure_hook(
             user_api_key_dict=user_api_key_dict, original_exception=e, request_data=data
         )
-        verbose_proxy_logger.error(
+        verbose_proxy_logger.exception(
             "litellm.proxy.proxy_server.audio_transcription(): Exception occured - {}".format(
                 str(e)
             )
         )
-        verbose_proxy_logger.debug(traceback.format_exc())
         if isinstance(e, HTTPException):
             raise ProxyException(
                 message=getattr(e, "message", str(e.detail)),
@@ -6234,7 +6234,7 @@ async def add_new_model(
     model_params: Deployment,
     user_api_key_dict: UserAPIKeyAuth = Depends(user_api_key_auth),
 ):
-    global llm_router, llm_model_list, general_settings, user_config_file_path, proxy_config, prisma_client, master_key, store_model_in_db, proxy_logging_obj
+    global llm_router, llm_model_list, general_settings, user_config_file_path, proxy_config, prisma_client, master_key, store_model_in_db, proxy_logging_obj, premium_user
     try:
         import base64
 
@@ -6244,6 +6244,12 @@ async def add_new_model(
                 detail={
                     "error": "No DB Connected. Here's how to do it - https://docs.litellm.ai/docs/proxy/virtual_keys"
                 },
+            )
+
+        if model_params.model_info.team_id is not None and premium_user is not True:
+            raise HTTPException(
+                status_code=403,
+                detail={"error": CommonProxyErrors.not_premium_user.value},
             )
 
         if not check_if_team_id_matches_key(
@@ -9213,6 +9219,7 @@ app.include_router(customer_router)
 app.include_router(spend_management_router)
 app.include_router(caching_router)
 app.include_router(analytics_router)
+app.include_router(guardrails_router)
 app.include_router(debugging_endpoints_router)
 app.include_router(ui_crud_endpoints_router)
 app.include_router(openai_files_router)
