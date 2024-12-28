@@ -2666,6 +2666,7 @@ def get_optional_params(  # noqa: PLR0915
             and custom_llm_provider != "nvidia_nim"
             and custom_llm_provider != "cerebras"
             and custom_llm_provider != "xai"
+            and custom_llm_provider != "glhf"
             and custom_llm_provider != "ai21_chat"
             and custom_llm_provider != "volcengine"
             and custom_llm_provider != "deepseek"
@@ -3466,6 +3467,16 @@ def get_optional_params(  # noqa: PLR0915
         )
         _check_valid_arg(supported_params=supported_params)
         optional_params = litellm.XAIChatConfig().map_openai_params(
+            model=model,
+            non_default_params=non_default_params,
+            optional_params=optional_params,
+        )
+    elif custom_llm_provider == "glhf":
+        supported_params = get_supported_openai_params(
+            model=model, custom_llm_provider=custom_llm_provider
+        )
+        _check_valid_arg(supported_params=supported_params)
+        optional_params = litellm.GLHFChatConfig().map_openai_params(
             model=model,
             non_default_params=non_default_params,
             optional_params=optional_params,
@@ -4929,6 +4940,11 @@ def validate_environment(  # noqa: PLR0915
                 keys_in_environment = True
             else:
                 missing_keys.append("XAI_API_KEY")
+        elif custom_llm_provider == "glhf":
+            if "GLHF_API_KEY" in os.environ:
+                keys_in_environment = True
+            else:
+                missing_keys.append("GLHF_API_KEY")
         elif custom_llm_provider == "ai21_chat":
             if "AI21_API_KEY" in os.environ:
                 keys_in_environment = True
@@ -6178,6 +6194,8 @@ class ProviderConfigManager:
             return litellm.DatabricksConfig()
         elif litellm.LlmProviders.XAI == provider:
             return litellm.XAIChatConfig()
+        elif litellm.LlmProviders.GLHF == provider:
+            return litellm.GLHFChatConfig()
         elif litellm.LlmProviders.TEXT_COMPLETION_OPENAI == provider:
             return litellm.OpenAITextCompletionConfig()
         elif litellm.LlmProviders.COHERE_CHAT == provider:

@@ -184,6 +184,9 @@ def get_llm_provider(  # noqa: PLR0915
                     elif endpoint == "api.groq.com/openai/v1":
                         custom_llm_provider = "groq"
                         dynamic_api_key = get_secret_str("GROQ_API_KEY")
+                    elif endpoint == "glhf.chat/api/openai/v1":
+                        custom_llm_provider = "glhf"
+                        dynamic_api_key = get_secret_str("GLHF_API_KEY")
                     elif endpoint == "https://integrate.api.nvidia.com/v1":
                         custom_llm_provider = "nvidia_nim"
                         dynamic_api_key = get_secret_str("NVIDIA_NIM_API_KEY")
@@ -268,6 +271,9 @@ def get_llm_provider(  # noqa: PLR0915
         ## openrouter
         elif model in litellm.openrouter_models:
             custom_llm_provider = "openrouter"
+        ## glhf
+        elif model in litellm.glhf_models:
+            custom_llm_provider = "glhf"
         ## maritalk
         elif model in litellm.maritalk_models:
             custom_llm_provider = "maritalk"
@@ -319,6 +325,7 @@ def get_llm_provider(  # noqa: PLR0915
         elif model == "*":
             custom_llm_provider = "openai"
         if not custom_llm_provider:
+            print("==>custom_llm_provider: ",litellm.anthropic_models,", glhf: ",litellm.glhf_models)
             if litellm.suppress_debug_info is False:
                 print()  # noqa
                 print(  # noqa
@@ -533,6 +540,13 @@ def _get_openai_compatible_provider_info(  # noqa: PLR0915
             api_base,
             dynamic_api_key,
         ) = litellm.XAIChatConfig()._get_openai_compatible_provider_info(
+            api_base, api_key
+        )
+    elif custom_llm_provider == "glhf":
+        (
+            api_base,
+            dynamic_api_key,
+        ) = litellm.GLHFChatConfig()._get_openai_compatible_provider_info(
             api_base, api_key
         )
     elif custom_llm_provider == "together_ai":

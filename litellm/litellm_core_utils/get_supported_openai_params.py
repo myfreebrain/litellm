@@ -59,6 +59,8 @@ def get_supported_openai_params(  # noqa: PLR0915
         return litellm.CerebrasConfig().get_supported_openai_params(model=model)
     elif custom_llm_provider == "xai":
         return litellm.XAIChatConfig().get_supported_openai_params(model=model)
+    elif custom_llm_provider == "glhf":
+        return litellm.GLHFChatConfig().get_supported_openai_params(model=model)
     elif custom_llm_provider == "ai21_chat" or custom_llm_provider == "ai21":
         return litellm.AI21ChatConfig().get_supported_openai_params(model=model)
     elif custom_llm_provider == "volcengine":

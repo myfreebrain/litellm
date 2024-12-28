@@ -374,6 +374,7 @@ def get_model_cost_map(url: str):
 
 
 model_cost = get_model_cost_map(url=model_cost_map_url)
+print("==>model_cost: ",model_cost)
 custom_prompt_dict: Dict[str, dict] = {}
 
 
@@ -460,6 +461,7 @@ perplexity_models: List = []
 watsonx_models: List = []
 gemini_models: List = []
 xai_models: List = []
+glhf_models: List = []
 deepseek_models: List = []
 azure_ai_models: List = []
 voyage_models: List = []
@@ -559,6 +561,8 @@ def add_known_models():
             text_completion_codestral_models.append(key)
         elif value.get("litellm_provider") == "xai":
             xai_models.append(key)
+        elif value.get("litellm_provider") == "glhf":
+            glhf_models.append(key)
         elif value.get("litellm_provider") == "deepseek":
             deepseek_models.append(key)
         elif value.get("litellm_provider") == "azure_ai":
@@ -626,6 +630,7 @@ openai_compatible_providers: List = [
     "perplexity",
     "xinference",
     "xai",
+    "glhf",
     "together_ai",
     "fireworks_ai",
     "empower",
@@ -837,6 +842,7 @@ model_list = (
     + gemini_models
     + text_completion_codestral_models
     + xai_models
+    + glhf_models
     + deepseek_models
     + azure_ai_models
     + voyage_models
@@ -887,6 +893,7 @@ models_by_provider: dict = {
     "aleph_alpha": aleph_alpha_models,
     "text-completion-codestral": text_completion_codestral_models,
     "xai": xai_models,
+    "glhf": glhf_models,
     "deepseek": deepseek_models,
     "mistral": mistral_chat_models,
     "azure_ai": azure_ai_models,
@@ -1148,6 +1155,7 @@ from .llms.fireworks_ai.embed.fireworks_ai_transformation import (
 from .llms.friendliai.chat.transformation import FriendliaiChatConfig
 from .llms.jina_ai.embedding.transformation import JinaAIEmbeddingConfig
 from .llms.xai.chat.transformation import XAIChatConfig
+from .llms.glhf.chat.transformation import GLHFChatConfig
 from .llms.volcengine import VolcEngineConfig
 from .llms.codestral.completion.transformation import CodestralTextCompletionConfig
 from .llms.azure.azure import (

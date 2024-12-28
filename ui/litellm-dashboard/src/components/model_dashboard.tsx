@@ -152,6 +152,7 @@ enum Providers {
   Databricks = "Databricks",
   Ollama = "Ollama",
   xAI = "xAI",
+  glhf = "glhf",
 }
 
 const provider_map: Record<string, string> = {
@@ -170,7 +171,7 @@ const provider_map: Record<string, string> = {
   xAI: "xai",
   Deepseek: "deepseek",
   Ollama: "ollama",
-
+  glhf: "glhf",
 };
 
 const retry_policy_map: Record<string, string> = {
