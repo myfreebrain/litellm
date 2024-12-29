@@ -19,7 +19,7 @@ RUN pip install --upgrade pip && \
 
 # Copy the current directory contents into the container at /app
 COPY . .
-
+RUN cp model_prices_and_context_window.json litellm/model_prices_and_context_window_backup.json
 # Build Admin UI
 RUN chmod +x docker/build_admin_ui.sh && ./docker/build_admin_ui.sh
 

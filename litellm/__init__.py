@@ -374,7 +374,6 @@ def get_model_cost_map(url: str):
 
 
 model_cost = get_model_cost_map(url=model_cost_map_url)
-print("==>model_cost: ",model_cost)
 custom_prompt_dict: Dict[str, dict] = {}
 
 
